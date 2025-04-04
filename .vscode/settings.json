@@ -1,0 +1,7 @@
+{
+    "cmake.sourceDirectory": "/home/fishatlsc/Learn/cv/cv_basic/src",
+    "files.associations": {
+        "iostream": "cpp",
+        "ostream": "cpp"
+    }
+}
