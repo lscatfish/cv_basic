@@ -1,3 +1,0 @@
-/home/fishatlsc/Learn/cv/cv_basic/build/CMakeFiles/cv_basic_learn.dir
-/home/fishatlsc/Learn/cv/cv_basic/build/CMakeFiles/edit_cache.dir
-/home/fishatlsc/Learn/cv/cv_basic/build/CMakeFiles/rebuild_cache.dir

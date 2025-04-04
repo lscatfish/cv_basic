@@ -9,7 +9,7 @@
 using namespace cv;
 
 int main(int argc, char** argv) {
-	Mat src = imread("../cube_in.png");
+	Mat src = imread("../img/input/cube_in.png");
 	if (src.empty()) {
 		printf("Could not load images...\n");
 		return -1;
