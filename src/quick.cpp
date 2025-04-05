@@ -15,6 +15,7 @@ void QuickDemo::colorSpace_Demo(cv::Mat &image) {
     cv::imshow("gray", gray);
     cv::imwrite("../img/output/colorSpace_hsv.png", hsv);
     cv::imwrite("../img/output/colorSpace_gray.png", gray);
+    cout << image.channels( ) << endl;
 }
 
 // 新增方法：矩阵创建
@@ -268,10 +269,11 @@ void QuickDemo::mix_image_Demo(Mat &image1, Mat &image2) {
 
 //对比度增强
 void QuickDemo::image_contrast_Demo(Mat &image) {
-    int   width   = image.cols;
-    int   height  = image.rows;
-    int   channel = image.channels( );
-    Mat   dst_at  = Mat::zeros(image.size( ), image.type( ));
+    int width   = image.cols;
+    int height  = image.rows;
+    int channel = image.channels( );
+    Mat dst_at  = Mat::zeros(image.size( ), image.type( ));
+    // dst_ptr=dst_at 是指针拷贝，修改一个矩阵的值会影响另一个
     Mat   dst_ptr = dst_at.clone( );
     float alpha   = 1.5;
     float beta    = 10.0;
@@ -279,7 +281,7 @@ void QuickDemo::image_contrast_Demo(Mat &image) {
     //转成灰度图，浮点数图（计算精度更高）。
     Mat image32f, image8u;
     cvtColor(image.clone( ), image8u, COLOR_BGR2GRAY);
-    image.convertTo(image32f, CV_32F);
+    image.convertTo(image32f, CV_32F);    //将图像转换为32位浮点数类型,为了提高计算精度,channel不变
 
     Mat dst_8u    = Mat::zeros(image8u.size( ), image8u.type( ));
     int channel8u = image8u.channels( );
@@ -322,4 +324,54 @@ void QuickDemo::image_contrast_Demo(Mat &image) {
     imshow("image8u对比度增强at", dst_8u);
     imshow("image对比度增强at", dst_at);
     imshow("image对比度增强ptr", dst_ptr);
+}
+
+//通道的拆分 与 合并
+void QuickDemo::channel_Demo(Mat &image) {
+    imshow("原图", image.clone( ));
+
+    // 声明vector容器存放 mat
+    std::vector< Mat > bgr;
+    split(image.clone( ), bgr);
+    imshow("b_channel", bgr[0]);
+    imshow("g_channel", bgr[1]);
+    imshow("r_channel", bgr[2]);
+    //事实上三张图都是灰度图
+
+    Mat dst_red;
+    bgr[0] = 0;
+    bgr[1] = 0;
+    merge(bgr, dst_red);
+    imshow("dst_red", dst_red);
+
+    // 先拆分通道再合并
+    std::vector< Mat > channels;
+    split(image.clone( ), channels);
+    Mat blue_channel  = channels[0];
+    Mat green_channel = channels[1] = 0;
+    Mat red_channel = channels[2] = 0;
+
+    std::vector< Mat > newchannels;
+    Mat                dst_blue;
+    newchannels.push_back(blue_channel);
+    newchannels.push_back(green_channel);
+    newchannels.push_back(red_channel);
+    merge(newchannels, dst_blue);
+    imshow("dst_blue", dst_blue);
+
+
+    // 声明 Mat数组存放 mat
+    Mat dst_green, BGR[3];
+    split(image.clone( ), BGR);
+    BGR[0] = 0;
+    BGR[2] = 0;
+    merge(BGR, 3, dst_green);
+    imshow("dst_green", dst_green);
+
+
+    //通道混合
+    Mat dst_mix   = dst_green.clone( );
+    int from_to[] = { 0, 0, 1, 1, 2, 2 };//交换channel的列表（从0到0；从1到1...）
+    mixChannels(&image, 1, &dst_mix, 1, from_to, 3);
+    imshow("通道混合", dst_mix);
 }

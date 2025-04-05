@@ -27,6 +27,8 @@ public:
     void mix_image_Demo(Mat &image1, Mat &image2);
     //对比度增强
     void image_contrast_Demo(Mat &image1);
+    //通道的拆分 与 合并
+    void channel_Demo(Mat &image);
 };
 
 #endif

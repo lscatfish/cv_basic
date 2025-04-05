@@ -15,8 +15,8 @@ int main(int argc, char **argv) {
         return -1;
     }
 
-    QuickDemo qk;                   //实例化
-    qk.image_contrast_Demo(src);    //调用
+    QuickDemo qk;               //实例化
+    qk.channel_Demo(src);    //调用
 
     waitKey(0);
     destroyAllWindows( );
