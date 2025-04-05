@@ -117,7 +117,6 @@ void QuickDemo::pixel_statistic_Demo(Mat &image) {
     std::vector< Mat > mv;
     split(image, mv);    // 将输入的多通道图像 image 分割成多个单通道图像，并将这些单通道图像存储在 mv 中。
 
-
     for (int i = 0; i < mv.size( ); i++) {
         /* 在图像中（矩阵/数组）中找到全局最小和最大值
 
@@ -141,8 +140,7 @@ void QuickDemo::pixel_statistic_Demo(Mat &image) {
                   << "\tmaxLoc.y=" << minLoc.y << std::endl;
     }
 
-
-    Mat mean, stddev;
+    Mat mean, stddev;    //这里可以理解为矩阵
     /*
         void meanStdDev(InputArray src, OutputArray mean, OutputArray stddev,
                         InputArray mask=noArray())
@@ -151,11 +149,13 @@ void QuickDemo::pixel_statistic_Demo(Mat &image) {
         stddev：输出参数，计算标准差
         mask：可选参数
     */
-    meanStdDev(image, mean, stddev);
-    std::cout << "mean=" << mean.at< double >(0)
-              << "\t" << mean.at< double >(1)
-              << "\t" << mean.at< double >(2) << std::endl;
-    std::cout << "stddev=" << stddev.at< double >(0)
-              << "\t" << stddev.at< double >(1)
-              << "\t" << stddev.at< double >(2) << std::endl;
+    meanStdDev(image, mean, stddev);    //对mean与stddev创建了[1 x 3]的矩阵
+    cout << mean.size( ) << endl
+         << mean.elemSize1( ) << endl;//elemSize1( )返回单个通道的字节数，这里是8,说明Mat里的数据是32位浮点channel3的类型
+    cout << "mean=" << mean.at< double >(0)
+         << "\t" << mean.at< double >(1)
+         << "\t" << mean.at< double >(2) << std::endl;
+    cout << "stddev=" << stddev.at< double >(0)
+         << "\t" << stddev.at< double >(1)
+         << "\t" << stddev.at< double >(2) << std::endl;
 }
