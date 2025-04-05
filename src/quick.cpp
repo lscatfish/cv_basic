@@ -160,6 +160,7 @@ void QuickDemo::pixel_statistic_Demo(Mat &image) {
          << "\t" << stddev.at< double >(2) << std::endl;
 }
 
+//对图片的运算
 void QuickDemo::operators_Demo(Mat &image) {
     Mat dst1 = Mat::zeros(image.size( ), image.type( ));
 
@@ -205,4 +206,120 @@ void QuickDemo::operators_Demo(Mat &image) {
     imshow("image加法", dst4);
     imshow("image减法", dst5);
     imshow("image除法", dst6);
+}
+
+//逻辑运算
+void QuickDemo::bitwise_Demo(Mat &image) {
+    Mat m1 = Mat::zeros(Size(256, 256), CV_8UC3);
+    Mat m2 = Mat::zeros(Size(256, 256), CV_8UC3);
+
+    // 线宽：thickness =-1 表示填充区域
+    // 绘制线条类型：lineType = LINE_8 一般绘制，取值为LINE_AA时执行反锯齿绘制，会很慢。
+    rectangle(m1, Rect(50, 50, 80, 80), Scalar(255, 255, 0), -1, LINE_8, 0);
+    // rectangle(m2, Rect(100, 100, 80, 80), Scalar(0, 255, 255), -1, LINE_8, 0);
+    circle(m2, Point(100, 100), 40, Scalar(0, 255, 255), -1, LINE_8, 0);
+
+    imshow("m1", m1);
+    imshow("m2", m2);
+    Mat dst0, dst1, dst00, dst11, dst3;
+    bitwise_and(m1.clone( ), m2.clone( ), dst0);
+    bitwise_or(m1.clone( ), m2.clone( ), dst1);
+
+    bitwise_not(dst0, dst00);
+
+    //“dst11 = ~dst1;” 这行代码的作用是对 dst1 进行按位取反操作，并将结果存储到 dst11 中。
+    dst11 = ~dst1;
+    /*  虽然 dst11 = ~dst1; 这行代码可以正常工作，
+        但更规范的做法是使用 bitwise_not 函数来完成按位取反操作，这样代码的可读性会更好。
+        例如：bitwise_not(dst1, dst11);
+        这行代码与 dst11 = ~dst1; 的效果完全相同，但更清晰地表达了按位取反的意图。*/
+
+    bitwise_xor(m1.clone( ), m2.clone( ), dst3);
+    imshow("and_交集_dst", dst0);
+    imshow("or_并集_dst", dst1);
+    imshow("not_交集取反_dst", dst00);
+    imshow("not_并集取反_dst", dst11);
+    imshow("xor_异或集_dst", dst3);
+}
+
+//图像的加权混合
+void QuickDemo::mix_image_Demo(Mat &image1, Mat &image2) {
+    double alpha = 0.5;
+    if (image1.size( ) != image2.size( )) {
+        cout << "图像尺寸不匹配" << endl;
+    }
+    Mat dst;
+    /* 线性混合
+        函数是将两张相同大小，相同类型的图片（叠加）线性融合的函数，可以实现图片的特效。
+        图像的线性混合：g ( x ) = ( 1 − α ) f 0 ( x ) + α f 1 ( x )
+        void addWeighted(
+        InputArray src1,　　 　原数组1
+        double alpha, 　　　　原数组1的权重值 : α
+        InputArray src2,　　　原数组2
+        double beta, 　　　　 数组２ 的权重值，( 1 − α )
+        double gamma, 　　 加权和后的图像的偏移量(标量)
+        OutputArray dst, 　　输出的数组（公式如上）
+        int dtype = -1　　　　输出阵列的深度，有默认值-1，即src1.depth()
+        );
+    */
+    addWeighted(image1, alpha, image2, (1 - alpha), 0, dst, -1);
+    imshow("dst", dst);
+}
+
+//对比度增强
+void QuickDemo::image_contrast_Demo(Mat &image) {
+    int   width   = image.cols;
+    int   height  = image.rows;
+    int   channel = image.channels( );
+    Mat   dst_at  = Mat::zeros(image.size( ), image.type( ));
+    Mat   dst_ptr = dst_at.clone( );
+    float alpha   = 1.5;
+    float beta    = 10.0;
+
+    //转成灰度图，浮点数图（计算精度更高）。
+    Mat image32f, image8u;
+    cvtColor(image.clone( ), image8u, COLOR_BGR2GRAY);
+    image.convertTo(image32f, CV_32F);
+
+    Mat dst_8u    = Mat::zeros(image8u.size( ), image8u.type( ));
+    int channel8u = image8u.channels( );
+    if (channel8u == 1) {
+        for (int h = 0; h < height; h++) {
+            for (int w = 0; w < width; w++) {
+                uchar v                  = image8u.at< uchar >(h, w);
+                dst_8u.at< uchar >(h, w) = saturate_cast< uchar >(v * alpha + beta);
+            }
+        }
+    }
+    double time0 = static_cast< double >(getTickCount( ));    // 计时
+    if (channel == 3) {
+        for (int h = 0; h < height; h++) {
+            for (int w = 0; w < width; w++) {
+                dst_at.at< Vec3b >(h, w)[0] = saturate_cast< uchar >(image32f.at< Vec3f >(h, w)[0] * alpha + beta);
+                dst_at.at< Vec3b >(h, w)[1] = saturate_cast< uchar >(image32f.at< Vec3f >(h, w)[1] * alpha + beta);
+                dst_at.at< Vec3b >(h, w)[2] = saturate_cast< uchar >(image32f.at< Vec3f >(h, w)[2] * alpha + beta);
+            }
+        }
+    }
+    double time1 = static_cast< double >(getTickCount( ));    // 计时
+    if (channel == 3) {
+        for (int h = 0; h < height; h++) {
+            float *current_row     = image32f.ptr< float >(h);
+            uchar *dst_current_row = dst_ptr.ptr< uchar >(h);
+            for (int w = 0; w < width; w++) {
+                *dst_current_row++ = saturate_cast< uchar >(*current_row++ * alpha + beta);
+                *dst_current_row++ = saturate_cast< uchar >(*current_row++ * alpha + beta);
+                *dst_current_row++ = saturate_cast< uchar >(*current_row++ * alpha + beta);
+            }
+        }
+    }
+    double time2 = static_cast< double >(getTickCount( ));    // 计时
+
+    // 使用at与ptr两种像素遍历方式，ptr遍历方式速度大约快一半。
+    cout << "time1-time0=" << (time1 - time0) / getTickFrequency( ) << endl;
+    cout << "time2-time1=" << (time2 - time1) / getTickFrequency( ) << endl;
+    imshow("image8u原图", image8u);
+    imshow("image8u对比度增强at", dst_8u);
+    imshow("image对比度增强at", dst_at);
+    imshow("image对比度增强ptr", dst_ptr);
 }

@@ -20,7 +20,13 @@ public:
     //像素统计
     void pixel_statistic_Demo(Mat &image);
     //对图片的运算
-    void operators_Demo(Mat& image);
+    void operators_Demo(Mat &image);
+    //逻辑运算
+    void bitwise_Demo(Mat &image);
+    //图像的加权混合
+    void mix_image_Demo(Mat &image1, Mat &image2);
+    //对比度增强
+    void image_contrast_Demo(Mat &image1);
 };
 
 #endif
