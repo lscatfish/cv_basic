@@ -19,6 +19,8 @@ public:
     void pixel_visiter_Demo(Mat &image);
     //像素统计
     void pixel_statistic_Demo(Mat &image);
+    //对图片的运算
+    void operators_Demo(Mat& image);
 };
 
 #endif

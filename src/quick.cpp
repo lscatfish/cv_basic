@@ -159,3 +159,53 @@ void QuickDemo::pixel_statistic_Demo(Mat &image) {
          << "\t" << stddev.at< double >(1)
          << "\t" << stddev.at< double >(2) << std::endl;
 }
+
+void QuickDemo::operators_Demo(Mat& image) {
+	Mat dst1 = Mat::zeros(image.size(), image.type());
+
+	// 加减除法：被因数可以是相同数据类型的矩阵，也可以是一个标量。
+	Mat m1 = Mat::zeros(image.size(), image.type());
+	m1 = Scalar(5, 5, 5);
+	dst1 = image - m1;
+	dst1 = dst1 + Scalar(30, 30, 30);
+	imshow("加法操作", dst1);
+
+	Mat dst2 = Mat::zeros(image.size(), image.type());
+
+	// 乘法：被因数必须是相同数据类型的矩阵（multiply函数对溢出uchar进行截断）。
+	Mat m2(image.size(), image.type(),Scalar(2,2,2));
+	multiply(image, m2, dst2);
+	imshow("乘法操作", dst2);
+
+	// 乘法的具体实现效果
+	Mat dst3 = Mat::zeros(image.size(), image.type());
+	int width = image.cols;
+	int height = image.rows;
+	int channel = image.channels();
+	for (int h = 0; h < height; h++) {
+		for (int w = 0; w < width; w++) {
+			Vec3b p1 = image.at<Vec3b>(h, w);
+			Vec3b p2 = m2.at<Vec3b>(h, w);
+			dst3.at<Vec3b>(h, w)[0] = saturate_cast<uchar>(p1[0] + p2[0]);
+			dst3.at<Vec3b>(h, w)[1] = saturate_cast<uchar>(p1[1] + p2[1]);
+			dst3.at<Vec3b>(h, w)[2] = saturate_cast<uchar>(p1[2] + p2[2]);
+		}
+	}
+	imshow("image遍历加法", dst3);
+
+	// 使用opencv自带函数，速度肯定更快
+	Mat m_test(image.size(),image.type(),Scalar(20,20,20));
+	Mat m_divide(image.size(),image.type(),Scalar(2,2,2));
+	Mat dst4 = Mat::zeros(image.size(), image.type());
+	Mat dst5 = Mat::zeros(image.size(), image.type());
+	Mat dst6 = Mat::zeros(image.size(), image.type());
+
+	add(image, m_test, dst4);
+	subtract(image, m_test, dst5);
+	divide(image, m_divide, dst6);
+	imshow("image加法", dst4);
+	imshow("image减法", dst5);
+	imshow("image除法", dst6);
+
+}
+
