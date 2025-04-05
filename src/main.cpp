@@ -16,7 +16,7 @@ int main(int argc, char** argv) {
 	}
 
 	QuickDemo qk;             //实例化
-	qk.pixel_visiter_Demo(src);  //调用
+	qk.pixel_statistic_Demo(src);  //调用
 
 	waitKey(0);
 	destroyAllWindows();

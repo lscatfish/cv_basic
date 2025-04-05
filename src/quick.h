@@ -15,8 +15,10 @@ public:
     void mat_create_Demo(cv::Mat &image);
     // 通过下标访问像素
     void pixel_visit_Demo(Mat &image);
-    // 通过指针访问像素
+    // 通过指针访问像素(z这是最快的)
     void pixel_visiter_Demo(Mat &image);
+    //像素统计
+    void pixel_statistic_Demo(Mat &image);
 };
 
 #endif

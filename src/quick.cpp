@@ -84,30 +84,53 @@ void QuickDemo::pixel_visit_Demo(Mat &image) {
 }
 
 // 通过指针访问像素
-void QuickDemo::pixel_visiter_Demo(Mat& image) {
-	int width = image.cols;
-	int height = image.rows;
-	int channel = image.channels();
-	if (channel == 1) {
-		for (int h = 0; h < height; h++) {
-			uchar* current_row = image.ptr<uchar>(h);
-			for (int w = 0; w < width; w++) {
-				int px = *current_row;
-				*current_row++ = 255 - px;
-			}
-		}
-	}
-	if (channel == 3) {
-		for (int h = 0; h < height; h++) {
-			uchar* current_row = image.ptr<uchar>(h);
-			for (int w = 0; w < width; w++) {
-				*current_row++ = 255 - *current_row;
-				*current_row++ = 255 - *current_row;
-				*current_row++ = 255 - *current_row;
-			}
-		}
-	}
-	imshow("image反色", image);
+void QuickDemo::pixel_visiter_Demo(Mat &image) {
+    int width   = image.cols;
+    int height  = image.rows;
+    int channel = image.channels( );
+    if (channel == 1) {
+        for (int h = 0; h < height; h++) {
+            uchar *current_row = image.ptr< uchar >(h);
+            for (int w = 0; w < width; w++) {
+                int px         = *current_row;
+                *current_row++ = 255 - px;
+            }
+        }
+    }
+    if (channel == 3) {
+        for (int h = 0; h < height; h++) {
+            uchar *current_row = image.ptr< uchar >(h);
+            for (int w = 0; w < width; w++) {
+                *current_row++ = 255 - *current_row;
+                *current_row++ = 255 - *current_row;
+                *current_row++ = 255 - *current_row;
+            }
+        }
+    }
+    imshow("image反色", image);
 }
 
-
+//像素统计
+void QuickDemo::pixel_statistic_Demo(Mat &image) {
+    double             min_v, max_v;
+    Point              minLoc, maxLoc;
+    std::vector< Mat > mv;
+    split(image, mv);
+    for (int i = 0; i < mv.size( ); i++) {
+        minMaxLoc(mv[i], &min_v, &max_v, &minLoc, &maxLoc, Mat( ));
+        std::cout << "No.channel:" << i
+                  << "\tmin_value=" << min_v
+                  << "\tmax_value=" << max_v << std::endl;
+        std::cout << "No.channel:" << i
+                  << "\tminLoc.x=" << minLoc.x
+                  << "\tmaxLoc.y=" << minLoc.y << std::endl;
+    }
+    Mat mean, stddev;
+    meanStdDev(image, mean, stddev);
+    std::cout << "mean=" << mean.at< double >(0)
+              << "\t" << mean.at< double >(1)
+              << "\t" << mean.at< double >(2) << std::endl;
+    std::cout << "stddev=" << stddev.at< double >(0)
+              << "\t" << stddev.at< double >(1)
+              << "\t" << stddev.at< double >(2) << std::endl;
+}
