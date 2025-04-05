@@ -115,8 +115,23 @@ void QuickDemo::pixel_statistic_Demo(Mat &image) {
     double             min_v, max_v;
     Point              minLoc, maxLoc;
     std::vector< Mat > mv;
-    split(image, mv);
+    split(image, mv);    // 将输入的多通道图像 image 分割成多个单通道图像，并将这些单通道图像存储在 mv 中。
+
+
     for (int i = 0; i < mv.size( ); i++) {
+        /* 在图像中（矩阵/数组）中找到全局最小和最大值
+
+            void minMaxLoc(InputArray src, CV_OUT double* minVal,
+                            CV_OUT double* maxVal = 0, CV_OUT Point* minLoc = 0,
+                            CV_OUT Point* maxLoc = 0, InputArray mask = noArray());
+            src，输入图像，单通道图像。
+            minVal，返回最小值的指针。若无需返回，此值设为 NULL。
+            maxVal，返回最大值的指针。若无需返回，此值设为 NULL。
+            minLoc，返回最小值位置的指针（二维情况下）。若无需返回，此值设为 NULL。
+            maxLoc，返回最大值位置的指针（二维情况下）。若无需返回，此值设为 NULL。
+            mask，最后一个参数是一个可选的掩码（mask），用于指定哪些像素参与计算，需要与输入图像集有相同尺寸。
+                    传入一个空的 Mat 对象，表示没有掩码，即对整个图像通道进行计算。
+        */
         minMaxLoc(mv[i], &min_v, &max_v, &minLoc, &maxLoc, Mat( ));
         std::cout << "No.channel:" << i
                   << "\tmin_value=" << min_v
@@ -125,7 +140,17 @@ void QuickDemo::pixel_statistic_Demo(Mat &image) {
                   << "\tminLoc.x=" << minLoc.x
                   << "\tmaxLoc.y=" << minLoc.y << std::endl;
     }
+
+
     Mat mean, stddev;
+    /*
+        void meanStdDev(InputArray src, OutputArray mean, OutputArray stddev,
+                        InputArray mask=noArray())
+        InputArray src 一般的彩色图，灰度图都可
+        mean：输出参数，计算均值
+        stddev：输出参数，计算标准差
+        mask：可选参数
+    */
     meanStdDev(image, mean, stddev);
     std::cout << "mean=" << mean.at< double >(0)
               << "\t" << mean.at< double >(1)
