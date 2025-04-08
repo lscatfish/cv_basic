@@ -375,3 +375,5 @@ void QuickDemo::channel_Demo(Mat &image) {
     mixChannels(&image, 1, &dst_mix, 1, from_to, 3);
     imshow("通道混合", dst_mix);
 }
+
+

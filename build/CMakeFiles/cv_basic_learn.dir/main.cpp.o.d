@@ -348,5 +348,4 @@ CMakeFiles/cv_basic_learn.dir/main.cpp.o: \
  /usr/include/opencv4/opencv2/video/background_segm.hpp \
  /usr/include/opencv4/opencv2/imgproc/imgproc.hpp \
  /usr/include/opencv4/opencv2/highgui/highgui.hpp \
- /home/fishatlsc/Learn/cv/cv_basic/src/quick.h \
- /usr/include/opencv4/opencv2/opencv.hpp
+ /home/fishatlsc/Learn/cv/cv_basic/src/quick.h

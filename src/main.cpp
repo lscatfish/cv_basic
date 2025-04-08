@@ -1,6 +1,6 @@
-#include <opencv4/opencv2/opencv.hpp>
-#include <opencv4/opencv2/imgproc/imgproc.hpp>
-#include <opencv4/opencv2/highgui/highgui.hpp>
+#include <opencv2/opencv.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/highgui/highgui.hpp>
 #include <stdio.h>
 #include <iostream>
 #include "quick.h"
@@ -16,7 +16,7 @@ int main(int argc, char **argv) {
     }
 
     QuickDemo qk;               //实例化
-    qk.channel_Demo(src);    //调用
+    qk.image_contrast_Demo(src);    //调用
 
     waitKey(0);
     destroyAllWindows( );
